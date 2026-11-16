@@ -1,0 +1,47 @@
+
+@import '../../app.component.scss';
+.container-primary-recipe-page {
+  overflow-y: auto;
+  height: 69.3vh;
+  border-radius: 0px 0px 12px 12px;
+
+  .recipes-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 19px;
+    margin-top: 18px;
+
+    .img-class-container {
+      min-width: 84px;
+      height: 84px;
+      border-radius: 12px;
+      background-size: cover;
+    }
+
+    .info-recepe-container {
+
+      h2 {
+        margin-bottom: 3px;
+        font-size: 16px;
+        font-weight: 700;
+
+      }
+
+      p {
+        margin-top: 3px;
+        font-size: 12px;
+        width: 65vw;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .details-button{
+        font-weight: 700;
+        text-align: end;
+        margin: 0;
+      }
+    }
+  }
+
+}
