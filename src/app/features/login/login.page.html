@@ -1,0 +1,51 @@
+<ion-content>
+  <div class="login-container">
+    <div class="login-header">
+      <img src="../../../assets/logo-app.png" alt="Logo App" class="login-logo" /> 
+
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="login-tabs">
+        <h1 class="active">Iniciar Sesión</h1>
+      </div>
+      <div class="inputs-container">
+        <ion-item>
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-input type="email" placeholder="Correo electrónico" formControlName="email"></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          <ion-text color="danger" *ngIf="loginForm.get('email')?.errors?.['required']">
+            El correo es obligatorio
+          </ion-text>
+          <ion-text color="danger" *ngIf="loginForm.get('email')?.errors?.['email']">
+            Introduce un correo válido
+          </ion-text>
+        </div>
+
+        <ion-item>
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input type="password" placeholder="Contraseña" formControlName="password"></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+          <ion-text color="danger" *ngIf="loginForm.get('password')?.errors?.['required']">
+            La contraseña es obligatoria
+          </ion-text>
+          <ion-text color="danger" *ngIf="loginForm.get('password')?.errors?.['minlength']">
+            La contraseña debe tener al menos 6 caracteres
+          </ion-text>
+        </div>
+      </div>
+      <ion-button expand="block" type="submit" [disabled]="loginForm.invalid" class="btn-login">
+        Iniciar sesión
+      </ion-button>
+      <div class="forgot-register">
+        <ion-button fill="clear" size="small" (click)="goToRegister()">
+          ¿No tienes cuenta? Regístrate
+        </ion-button>
+      </div>
+    </form>
+
+
+  </div>
+</ion-content>
