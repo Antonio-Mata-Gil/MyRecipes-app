@@ -1,10 +1,8 @@
-import { Step } from './../../core/services/recipes.models';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
 import { ApiServiceService } from 'src/app/core/services/api-service.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { RecipesApiResponse } from 'src/app/core/services/recipes.models';
-import { EditRecipePage } from '../edit-recipe/edit-recipe.page';
 
 @Component({
   selector: 'app-recipe-details',
@@ -13,16 +11,20 @@ import { EditRecipePage } from '../edit-recipe/edit-recipe.page';
 })
 export class RecipeDetailsPage implements OnInit {
   public recipe?: RecipesApiResponse;
-  public ingredientOn: boolean = true 
+  public ingredientOn: boolean = true
   public recipeDetails: RecipesApiResponse [] = [];
-  constructor(private apiService: ApiServiceService, private route: ActivatedRoute, private router: Router) {}
+  public currentUserUid: string | null = null;
+  constructor(private apiService: ApiServiceService, private route: ActivatedRoute, private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.authService.getCurrentUserData().subscribe((userData) => {
+      this.currentUserUid = userData?.uid ?? null;
+    });
     this.route.params.subscribe((params)=>{
       const recipeid = params['id'];
-      this.apiService.getRecipeId(recipeid).subscribe((info:RecipesApiResponse)=>{
-        this.recipe= info
-        
+      this.apiService.getRecipeById(recipeid).subscribe((info )=>{
+        this.recipe= info[0];
+
       })
     })
   }
@@ -37,9 +39,12 @@ export class RecipeDetailsPage implements OnInit {
       this.ingredientOn = false
     }
   }
-  editButton(recipe?: RecipesApiResponse){
-    this.router.navigate(['/edit-recipe', recipe?.id])
+  editButton(): void {
+  const recipeId = this.route.snapshot.paramMap.get('id');
+  if (recipeId) {
+    this.router.navigate(['/edit-recipe', recipeId]);
   }
-  
- 
+}
+
+
 }

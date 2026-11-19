@@ -7,7 +7,8 @@ export interface RecipesApiResponse {
     ingredientes?: Ingrediente[]
     description: string
     steps?: Step[]
-    mine?: boolean
+    uid?: string
+    isPublic?: boolean
   }
   
   export interface Ingrediente {

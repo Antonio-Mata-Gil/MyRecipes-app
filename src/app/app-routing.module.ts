@@ -1,54 +1,69 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
+import { NoAuthGuard } from './core/guards/no-auth.guard';
 
 const routes: Routes = [
-  {
-    path: 'tabs',
-    loadChildren: () => import('./core/tabs/tabs.module').then( m => m.TabsPageModule)
-  },
   {
     path: '',
     redirectTo: 'tabs/home',
     pathMatch: 'full'
   },
   {
-    path: 'categories',
-    loadChildren: () => import('./features/categories/categories.module').then( m => m.CategoriesPageModule)
+    path: 'login',
+    canActivate: [NoAuthGuard],
+    loadChildren: () => import('./features/login/login.module').then(m => m.LoginPageModule)
   },
   {
-    path: 'recipes',
-    loadChildren: () => import('./features/recipes/recipes.module').then( m => m.RecipesPageModule)
-  },
-  {
-    path: 'form',
-    loadChildren: () => import('./features/form/form.module').then( m => m.FormPageModule)
-  },
-  {
-    path: 'my-recipes',
-    loadChildren: () => import('./features/my-recipes/my-recipes.module').then( m => m.MyRecipesPageModule)
+    path: 'register',
+    canActivate: [NoAuthGuard],
+    loadChildren: () => import('./features/register/register.module').then(m => m.RegisterPageModule)
   },
   {
     path: 'tabs',
-    loadChildren: () => import('./core/tabs/tabs.module').then( m => m.TabsPageModule)
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./core/tabs/tabs.module').then(m => m.TabsPageModule)
+  },
+  {
+    path: 'categories',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/categories/categories.module').then(m => m.CategoriesPageModule)
+  },
+  {
+    path: 'recipes',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/recipes/recipes.module').then(m => m.RecipesPageModule)
+  },
+  {
+    path: 'form',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/form/form.module').then(m => m.FormPageModule)
+  },
+  {
+    path: 'my-recipes',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/my-recipes/my-recipes.module').then(m => m.MyRecipesPageModule)
   },
   {
     path: 'recipe-details/:id',
-    loadChildren: () => import('./features/recipe-details/recipe-details.module').then( m => m.RecipeDetailsPageModule)
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/recipe-details/recipe-details.module').then(m => m.RecipeDetailsPageModule)
   },
   {
     path: 'category-details/:category',
-    loadChildren: () => import('./features/category-details/category-details.module').then( m => m.CategoryDetailsPageModule)
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/category-details/category-details.module').then(m => m.CategoryDetailsPageModule)
   },
-
   {
     path: 'search',
-    loadChildren: () => import('./features/search/search.module').then( m => m.SearchPageModule)
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/search/search.module').then(m => m.SearchPageModule)
   },
   {
     path: 'edit-recipe/:id',
-    loadChildren: () => import('./features/edit-recipe/edit-recipe.module').then( m => m.EditRecipePageModule)
-  },
-  
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/edit-recipe/edit-recipe.module').then(m => m.EditRecipePageModule)
+  }
 ];
 
 @NgModule({

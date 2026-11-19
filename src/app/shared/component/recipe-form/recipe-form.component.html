@@ -1,29 +1,32 @@
-<form
- *ngIf="recipeForm" [formGroup]="recipeForm" (ngSubmit)="onSubmit()" >
+<form *ngIf="recipeForm" [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+  <!-- Sección de imagen -->
   <div class="img-container">
-    <img class="img-recipe" src="https://cdn.icon-icons.com/icons2/510/PNG/512/image_icon-icons.com_50366.png" alt="">
-    <ion-label>Añadir una foto</ion-label> 
-    <p>(Escribir url)</p>
-    <input class="input-img"  label-placement="floating" fill="outline" type="url" accept="image/*" formControlName="img" required />
-
+    <img class="img-recipe" src="https://cdn.icon-icons.com/icons2/510/PNG/512/image_icon-icons.com_50366.png"
+      alt="Icono de imagen">
+    <ion-label>Añadir una foto</ion-label>
+    <p>(Selecciona una imagen)</p>
+    <input class="input-img" id="inputImg" type="file" (change)="onImageSelected($event)" accept="image/*"
+      formControlName="img" />
   </div>
-<div class="container-input">
-<ion-label>Nombre Receta</ion-label>
-<ion-input  
-placeholder="Nombre de la receta"
-class="input-text"
-[counter]="true"
-[maxlength]="50"  formControlName="title" required></ion-input>
-</div>
-<div class="container-input">
-<ion-label>Descripción Receta</ion-label>
-<ion-textarea  placeholder="Descripción de la receta"
-class="input-text textarea"
-[counter]="true"
-[maxlength]="150"  formControlName="description" required></ion-textarea>
-</div>
 
- <div class="category-container container-input">
+  <!-- Nombre de la receta -->
+  <div class="container-input">
+    <ion-label>Nombre Receta</ion-label>
+    <ion-input placeholder="Nombre de la receta" class="input-text" [counter]="true" [maxlength]="50"
+      formControlName="title" required>
+    </ion-input>
+  </div>
+
+  <!-- Descripción -->
+  <div class="container-input">
+    <ion-label>Descripción Receta</ion-label>
+    <ion-textarea placeholder="Descripción de la receta" class="input-text textarea" [counter]="true" [maxlength]="150"
+      formControlName="description" required>
+    </ion-textarea>
+  </div>
+
+  <!-- Categoría -->
+  <div class="category-container container-input">
     <ion-label>Categoría</ion-label>
     <ion-select class="input-text" placeholder="Elige categoria" formControlName="category" required>
       <ion-select-option value="Desayunos">Desayunos</ion-select-option>
@@ -36,52 +39,82 @@ class="input-text textarea"
       <ion-select-option value="Otros">Otros</ion-select-option>
     </ion-select>
   </div>
+
+  <!-- Tiempo de preparación -->
   <div class="container-input">
     <ion-label>Tiempo de preparación (minutos)</ion-label>
     <div class="time-container-number">
-      <p> < 5 </p>
+      <p>&lt; 5</p>
       <p>30</p>
-      <p>>60</p>
+      <p>&gt;60</p>
     </div>
-    <ion-range class="time-container" min="5" max="60" step="1" pin="true" formControlName="time" required></ion-range>
+    <ion-range class="time-container" min="5" max="60" step="1" [pin]="true" [pinFormatter]="formatTime" formControlName="time" required>
+    </ion-range>
   </div>
+
+  <!-- ¿Hacer receta pública? -->
+  <div class="container-input">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <ion-checkbox formControlName="isPublic"></ion-checkbox>
+      <ion-label>¿Quieres hacer pública la receta?</ion-label>
+    </div>
+  </div>
+
+  <!-- Ingredientes -->
   <div formArrayName="ingredientes" class="container-input">
-    <ion-label>Ingredientes </ion-label>
-    <div class="conatiner-input-ingredient"  *ngFor="let ingredient of getIngredients.controls; let i = index" [formGroupName]="i">
-      <ion-input class="input-text ingredient" placeholder="Ingrediente" formControlName="nombre" required></ion-input>
-      <ion-input class="input-text ingredient" placeholder="Cantidad" formControlName="cantidad" required></ion-input>
+    <ion-label>Ingredientes</ion-label>
+    <div class="conatiner-input-ingredient" *ngFor="let ingredient of getIngredients.controls; let i = index"
+      [formGroupName]="i">
+      <ion-input class="input-text ingredient" placeholder="Ingrediente" formControlName="nombre" required>
+      </ion-input>
+      <ion-input class="input-text ingredient" placeholder="Cantidad" formControlName="cantidad" required>
+      </ion-input>
     </div>
   </div>
-  <div class="container-button-remove" >
-    <div [ngClass]="{'icon-container': getIngredients.length >= 2, 'icon-container-r': getIngredients.length < 2}">
-      <ion-icon class="button-plus" name="add-sharp" (click)="addIngredient()"></ion-icon>
+
+  <!-- Botones de ingredientes -->
+  <div class="container-button-remove">
+    <div (click)="addIngredient()"
+      [ngClass]="{'icon-container': getIngredients.length >= 2, 'icon-container-r': getIngredients.length < 2}">
+      <ion-icon class="button-plus" name="add-sharp"></ion-icon>
       <p>Ingrediente</p>
     </div>
-    <div class="icon-container" *ngIf="getIngredients.length >= 2">
-      <ion-icon class="button-plus remove-button" name="trash-sharp" (click)="removeLastIngredient()"></ion-icon>
+    <div class="icon-container" (click)="removeLastIngredient()" *ngIf="getIngredients.length >= 2">
+      <ion-icon class="button-plus remove-button" name="trash-sharp"></ion-icon>
       <p>Eliminar</p>
     </div>
   </div>
+
+  <!-- Pasos -->
   <div class="container-input" formArrayName="steps">
     <ion-label>Pasos</ion-label>
-    <div *ngFor="let step of getStep.controls; let i = index" [formGroupName]="i">
-      <ion-textarea placeholder="Introduce una pequeña descripción del paso" class="input-text textarea" formControlName="step" required></ion-textarea>
+    <div *ngFor="let step of getSteps.controls; let i = index" [formGroupName]="i">
+      <ion-textarea placeholder="Introduce una pequeña descripción del paso" class="input-text textarea"
+        formControlName="step" required>
+      </ion-textarea>
     </div>
   </div>
-  <div class="container-button-remove" >
-    <div [ngClass]="{'icon-container': getStep.length >= 2, 'icon-container-r': getStep.length < 2}">
-      <ion-icon class="button-plus" name="add-sharp" (click)="addStep()"></ion-icon>
+
+  <!-- Botones de pasos -->
+  <div class="container-button-remove">
+    <div (click)="addStep()" [ngClass]="{'icon-container': getSteps.length >= 2, 'icon-container-r': getSteps.length < 2}">
+      <ion-icon class="button-plus" name="add-sharp" >
+      </ion-icon>
       <p>Paso</p>
     </div>
-    <div class="icon-container" *ngIf="getStep.length >= 2">
-      <ion-icon class="button-plus remove-button" name="trash-sharp" (click)="removeLastStep()"></ion-icon>
+    <div (click)="removeLastStep()" class="icon-container" *ngIf="getSteps.length >= 2">
+      <ion-icon class="button-plus remove-button" name="trash-sharp" ></ion-icon>
       <p>Eliminar</p>
     </div>
   </div>
-  <div>
-    <ion-button (click)="presentAlert()" class="button-confirm" type="submit">Confirmar</ion-button>
-  </div>
- 
-  <ion-button (click)="deleteAlert(recipe)" *ngIf="recipe" class="detele-button button-confirm"  >Eliminar</ion-button>
 
+  <!-- Botones de acción -->
+  <div class="button-container">
+    <ion-button [disabled]="!recipeForm.valid || isSubmitting" class="button-confirm" type="submit">
+      {{ isSubmitting ? 'Guardando...' : 'Confirmar' }}
+    </ion-button>
+    <ion-button *ngIf="recipe" (click)="deleteAlert(recipeId!)" class="detele-button button-confirm">
+      Eliminar
+    </ion-button>
+  </div>
 </form>

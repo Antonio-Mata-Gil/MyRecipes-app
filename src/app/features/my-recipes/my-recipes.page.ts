@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiServiceService } from 'src/app/core/services/api-service.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { RecipesApiResponse } from 'src/app/core/services/recipes.models';
 
 @Component({
@@ -9,15 +10,20 @@ import { RecipesApiResponse } from 'src/app/core/services/recipes.models';
 })
 export class MyRecipesPage implements OnInit {
   public myRecipes: RecipesApiResponse [] = [];
+  public currentUserUid: string | null = null;
 
-  constructor(private apiService: ApiServiceService) { }
+  constructor(private apiService: ApiServiceService, private authService: AuthService) { }
 
   ngOnInit() {
-    this.getRecipesList();
+    this.authService.getCurrentUserData().subscribe((userData) => {
+      this.currentUserUid = userData?.uid ?? null;
+      this.getRecipesList();
+    });
   }
   public getRecipesList() {
-    this.apiService.getRecipes().subscribe(recipes => {
-      this.myRecipes = recipes.filter(recipe => recipe.mine === true);
+    if (!this.currentUserUid) return;
+    this.apiService.getRecipe(this.currentUserUid).subscribe(recipes => {
+      this.myRecipes = recipes.filter(recipe => recipe.uid === this.currentUserUid);
       
     });
   }
